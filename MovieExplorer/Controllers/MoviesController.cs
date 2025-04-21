@@ -8,6 +8,11 @@ namespace MovieExplorer.Controllers
         public async Task<IActionResult> Latest()
         {
             var latestMovies=await movieService.GetLatestMovies();
+            Console.WriteLine($"Latest Movies Count: {latestMovies.Count()}");
+            foreach (var movie in latestMovies)
+            {
+                Console.WriteLine($"Movie: {movie.Title}, Poster: {movie.PosterPath}, Release: {movie.ReleaseDate}");
+            }
             return View(latestMovies);
         }
 

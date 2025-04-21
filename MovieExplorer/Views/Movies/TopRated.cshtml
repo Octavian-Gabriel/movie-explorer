@@ -6,17 +6,23 @@
 
 <h1>Top Rated Movies</h1>
 
+@if(!Model.Any()){
+	<p> No movies found!</p>
+}
+else
+{
 <div class="row">
     @foreach (var movie in Model)
     {
             <div class="col-md-3 mb-4">
                 <div class="card">
-                    <img src="@movie.PosterPath" class="card-img-top" alt="@movie.Title">
+                    <img src="@movie.PosterPath" class="card-img-top" alt="@movie.Title" style="width:100%; height:300px; object-fit:cover;" />
                     <div class="card-body">
                         <h5 class="card-title">@movie.Title</h5>
-                        <p class="card-text">Release: @movie.ReleaseDate</p>
+                        <p class="card-text">Release date: @movie.ReleaseDate</p>
                     </div>
                 </div>
             </div>
     }
 </div>
+}

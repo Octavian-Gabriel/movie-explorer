@@ -1,0 +1,22 @@
+﻿@model IEnumerable<MovieExplorer.Models.ViewModels.MovieListViewModel>
+
+@{
+	ViewData["Title"] = "Latest Movies";
+}
+
+<h1>Latest Movies</h1>
+<div class="row">
+	@foreach(var movie in Model)
+	{
+		<div class="col-md-3 mb-4">
+			<div class="card">
+				<img src="@movie.PosterPath" class="card-img-top" alt="@movie.Title" />
+				<div class="card-body">
+					<h5 class="card-title">@movie.Title</h5>
+					<p class="card-text">Release: @movie.ReleaseDate</p>
+				</div>
+			</div>
+		</div>
+	}
+
+</div>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MovieExplorer.Models;
 using MovieExplorer.Models.ViewModels;
 using MovieExplorer.Services;
 
@@ -62,6 +63,17 @@ namespace MovieExplorer.Controllers
                 }).Prepend(new SelectListItem { Value = "", Text = "All Genres" })
             };
             return View(viewModel);
+        }
+        public async Task<IActionResult>Details(int movieId)
+        {
+            try
+            {
+                var movieDetails = movieService.GetMovieDetails(movieId);
+                return View(movieDetails);
+            }
+            catch (Exception ex) {
+                return View("Error", new ErrorViewModel { RequestId = ex.Message });
+            }
         }
     }
 }

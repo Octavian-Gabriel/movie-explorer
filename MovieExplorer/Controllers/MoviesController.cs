@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MovieExplorer.Models;
 using MovieExplorer.Models.ViewModels;
 using MovieExplorer.Services;
 
@@ -10,11 +11,6 @@ namespace MovieExplorer.Controllers
         public async Task<IActionResult> Latest()
         {
             var latestMovies = await movieService.GetLatestMovies();
-            Console.WriteLine($"Latest Movies Count: {latestMovies.Count()}");
-            foreach (var movie in latestMovies)
-            {
-                Console.WriteLine($"Movie: {movie.Title}, Poster: {movie.PosterPath}, Release: {movie.ReleaseDate}");
-            }
             return View(latestMovies);
         }
 
@@ -62,6 +58,17 @@ namespace MovieExplorer.Controllers
                 }).Prepend(new SelectListItem { Value = "", Text = "All Genres" })
             };
             return View(viewModel);
+        }
+        public async Task<IActionResult>Details([FromRoute(Name = "id")] int movieId)
+        {
+            try
+            {
+                var movieDetails = await movieService.GetMovieDetails(movieId);
+                return View(movieDetails);
+            }
+            catch (Exception ex) {
+                return View("Error", new ErrorViewModel { RequestId = ex.Message });
+            }
         }
     }
 }

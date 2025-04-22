@@ -25,6 +25,27 @@ namespace MovieExplorer.Services
             return ParseResponse(response);
         }
 
+        public async Task<IEnumerable<MovieListViewModel>> SearchMovies(string movieName, int? genreId)
+        {
+            var queryParams=new List<string> { $"apiKey={_apiKey}" };
+            if (!string.IsNullOrEmpty(movieName))
+            {
+                queryParams.Add($"query={Uri.EscapeDataString(movieName)}");
+            }
+            if (genreId.HasValue)
+            {
+                queryParams.Add($"with_genres={genreId.Value}");
+            }
+
+            var queryString=string.Join("&", queryParams);
+            var url=$"search/movie?{queryString}";
+
+            var response = await httpClient.GetFromJsonAsync<TMDbResponse>(url)
+                ?? throw new InvalidOperationException("Failed to retrieve movies by name and/or genre");
+
+            return ParseResponse(response);
+        }
+
         private IEnumerable<MovieListViewModel> ParseResponse(TMDbResponse response)
         {
             return response.Results?.Select(r => new MovieListViewModel

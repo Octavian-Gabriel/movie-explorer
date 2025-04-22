@@ -1,5 +1,8 @@
+using MovieExplorer.Data;
 using MovieExplorer.Services;
-
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 namespace MovieExplorer
 {
     public class Program
@@ -16,6 +19,12 @@ namespace MovieExplorer
                 }
                 );
 
+            builder.Services.AddDbContext<MovieExplorerDbContext>(options =>
+            options.UseSqlite(builder.Configuration.GetConnectionString("MovieExplorerDbContext")));
+
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<MovieExplorerDbContext>()
+    .AddDefaultTokenProviders();
 
 
             // Add services to the container.
@@ -41,6 +50,11 @@ namespace MovieExplorer
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            using(var scope =app.Services.CreateScope())
+            {
+                var dbContext=scope.ServiceProvider.GetRequiredService<MovieExplorerDbContext>();
+                dbContext.Database.EnsureCreated();
+            }
             app.Run();
         }
     }

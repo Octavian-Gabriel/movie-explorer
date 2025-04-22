@@ -20,6 +20,7 @@ else
                     <div class="card-body">
                         <h5 class="card-title">@movie.Title</h5>
                         <p class="card-text">Release date: @movie.ReleaseDate</p>
+                        <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-primary">Details</a>
                     </div>
                 </div>
             </div>

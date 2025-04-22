@@ -78,12 +78,13 @@ namespace MovieExplorer.Services
                 ?? throw new InvalidOperationException("Failed to retrieve movie credits.");
 
             var imageUrls = new List<string>();
-            imageUrls.AddRange(imagesResponse.Posters?
-                .Take(5)
-                .Select(p => $"https://image.tmdb.org/t/p/w500{p.FilePath}") ?? Enumerable.Empty<string>());
             imageUrls.AddRange(imagesResponse.Backdrops?
                 .Take(5)
                 .Select(b => $"https://image.tmdb.org/t/p/w1280{b.FilePath}") ?? Enumerable.Empty<string>());
+            imageUrls.AddRange(imagesResponse.Posters?
+                .Take(1)
+                .Select(p => $"https://image.tmdb.org/t/p/w500{p.FilePath}") ?? Enumerable.Empty<string>());
+            
 
             var actors = creditsResponse.Cast?
                 .Take(10) 

@@ -1,0 +1,71 @@
+﻿@model MovieExplorer.Models.ViewModels.MovieDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<h1>@Model.Title</h1>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h3>Description</h3>
+        <p>@Model.Description</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h3>Image Gallery</h3>
+        @if (Model.ImageUrls.Any())
+        {
+            <div class="d-flex flex-wrap">
+                @foreach (var imageUrl in Model.ImageUrls)
+                {
+                    <div class="m-2">
+                        <img src="@imageUrl" alt="Movie Image" style="max-width: 300px; height: auto;" />
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p>No images available.</p>
+        }
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h3>Actors</h3>
+        @if (Model.Actors.Any())
+        {
+            <div class="row">
+                @foreach (var actor in Model.Actors)
+                {
+                    <div class="col-md-3 mb-3">
+                        <div class="card actor-card">
+                            @if (!string.IsNullOrEmpty(actor.ProfileImgUrl))
+                            {
+                                <img src="@actor.ProfileImgUrl" class="card-img-top" alt="@actor.Name" />
+                            }
+                            else
+                            {
+                                <img src="https://via.placeholder.com/185x200?text=No+Image" class="card-img-top" alt="@actor.Name" />
+                            }
+                            <div class="card-body">
+                                <h5 class="card-title">@actor.Name</h5>
+                                <p class="card-text">Character: @actor.Character</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p>No actors available.</p>
+        }
+    </div>
+</div>
+
+<a asp-action="Latest" class="btn btn-secondary">Back to Latest Movies</a>

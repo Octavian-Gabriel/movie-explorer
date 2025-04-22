@@ -1,4 +1,5 @@
-﻿using MovieExplorer.Models.ViewModels;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+using MovieExplorer.Models.ViewModels;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -9,7 +10,7 @@ namespace MovieExplorer.Services
 
     {
         private readonly string _apiKey = configuration["TMDb:ApiKey"]?? throw new ArgumentNullException(nameof(configuration));
-
+        private static readonly Dictionary<int, string> _genreCache = [];
         public async Task<IEnumerable<MovieListViewModel>> GetLatestMovies()
         {
             var response = await httpClient.GetFromJsonAsync<TMDbResponse>($"movie/now_playing?api_key={_apiKey}")
@@ -23,6 +24,43 @@ namespace MovieExplorer.Services
             var response = await httpClient.GetFromJsonAsync<TMDbResponse>($"movie/top_rated?api_key={_apiKey}")
                 ?? throw new InvalidOperationException("Failed to retrieve top rated movies.");
             return ParseResponse(response);
+        }
+
+        public async Task<IEnumerable<MovieListViewModel>> SearchMovies(string movieName, int? genreId)
+        {
+            var queryParams=new List<string> { $"api_key={_apiKey}" };
+            if (!string.IsNullOrEmpty(movieName))
+            {
+                queryParams.Add($"query={Uri.EscapeDataString(movieName)}");
+            }
+            if (genreId.HasValue)
+            {
+                queryParams.Add($"with_genres={genreId.Value}");
+            }
+
+            var queryString=string.Join("&", queryParams);
+            var url=$"search/movie?{queryString}";
+            var response = await httpClient.GetFromJsonAsync<TMDbResponse>(url)
+                ?? throw new InvalidOperationException("Failed to retrieve movies by name and/or genre");
+
+            return ParseResponse(response);
+        }
+        public async Task<Dictionary<int, string>> GetGenres()
+        {
+            if (_genreCache.Count != 0)
+            {
+                return _genreCache;
+            }
+            var response = await httpClient.GetFromJsonAsync<TMDbGenreListResponse>($"genre/movie/list?api_key={_apiKey}")
+                ?? throw new InvalidOperationException("Failed to retrieve genres list!");
+            foreach (var genre in response.Genres )
+            {
+                if(genre.Id!=null && !string.IsNullOrEmpty(genre.GenreName))
+                {
+                    _genreCache.Add((int)genre.Id, genre.GenreName);
+                }
+            }
+            return _genreCache;
         }
 
         private IEnumerable<MovieListViewModel> ParseResponse(TMDbResponse response)
@@ -52,6 +90,19 @@ namespace MovieExplorer.Services
             public string PosterPath {  get; set; }=string.Empty;
             [JsonPropertyName("release_date")]
             public string ReleaseDate { get; set; } = string.Empty;
+        }
+
+        private class TMDbGenreListResponse
+        {
+            public List<TMDbMovieGenre> Genres { get; set; }
+        }
+
+        private class TMDbMovieGenre
+        {
+            [JsonPropertyName("id")]
+            public int? Id { get; set; }
+            [JsonPropertyName("name")]
+            public string? GenreName { get; set; }
         }
     }
 }

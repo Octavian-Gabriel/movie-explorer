@@ -5,5 +5,9 @@ namespace MovieExplorer.Services
     {
         Task<IEnumerable<MovieListViewModel>> GetLatestMovies();
         Task<IEnumerable<MovieListViewModel>> GetTopRatedMovies();
+
+        Task<IEnumerable<MovieListViewModel>> SearchMovies(string movieName, int? gendreId);
+
+        Task<Dictionary<int, string>> GetGenres();
     }
 }

@@ -3,6 +3,7 @@ using MovieExplorer.Models.ViewModels;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace MovieExplorer.Services
 {
@@ -62,6 +63,46 @@ namespace MovieExplorer.Services
             }
             return _genreCache;
         }
+        public async Task<MovieDetailsViewModel> GetMovieDetails(int movieId)
+        {
+            // Fetch movie details
+            var movieDetails = await httpClient.GetFromJsonAsync<TMDbMovieDetails>($"movie/{movieId}?api_key={_apiKey}")
+                ?? throw new InvalidOperationException("Failed to retrieve movie details.");
+
+            // Fetch movie images
+            var imagesResponse = await httpClient.GetFromJsonAsync<TMDbImagesResponse>($"movie/{movieId}/images?api_key={_apiKey}")
+                ?? throw new InvalidOperationException("Failed to retrieve movie images.");
+
+            // Fetch movie credits
+            var creditsResponse = await httpClient.GetFromJsonAsync<TMDbCreditsResponse>($"movie/{movieId}/credits?api_key={_apiKey}")
+                ?? throw new InvalidOperationException("Failed to retrieve movie credits.");
+
+            var imageUrls = new List<string>();
+            imageUrls.AddRange(imagesResponse.Posters?
+                .Take(5)
+                .Select(p => $"https://image.tmdb.org/t/p/w500{p.FilePath}") ?? Enumerable.Empty<string>());
+            imageUrls.AddRange(imagesResponse.Backdrops?
+                .Take(5)
+                .Select(b => $"https://image.tmdb.org/t/p/w1280{b.FilePath}") ?? Enumerable.Empty<string>());
+
+            var actors = creditsResponse.Cast?
+                .Take(10) 
+                .Select(c => new ActorViewModel
+                {
+                    Name = c.Name ?? "Unknown",
+                    Character = c.Character ?? "N/A",
+                    ProfileImgUrl = string.IsNullOrEmpty(c.ProfilePath) ? null : $"https://image.tmdb.org/t/p/w185{c.ProfilePath}"
+                }) ?? Enumerable.Empty<ActorViewModel>();
+
+            return new MovieDetailsViewModel
+            {
+                Id = movieId,
+                Title = movieDetails.Title ?? "Unknown",
+                Description = movieDetails.Overview ?? "N/A",
+                ImageUrls = imageUrls.ToList(),
+                Actors = actors.ToList()
+            };
+        }
 
         private IEnumerable<MovieListViewModel> ParseResponse(TMDbResponse response)
         {
@@ -103,6 +144,50 @@ namespace MovieExplorer.Services
             public int? Id { get; set; }
             [JsonPropertyName("name")]
             public string? GenreName { get; set; }
+        }
+        private class TMDbMovieDetails
+        {
+            [JsonPropertyName("id")]
+            public int? Id { get; set; }
+
+            [JsonPropertyName("title")]
+            public string? Title { get; set; }
+
+            [JsonPropertyName("overview")]
+            public string? Overview { get; set; }
+        }
+
+        private class TMDbImagesResponse
+        {
+            [JsonPropertyName("posters")]
+            public List<TMDbImage>? Posters { get; set; }
+
+            [JsonPropertyName("backdrops")]
+            public List<TMDbImage>? Backdrops { get; set; }
+        }
+
+        private class TMDbImage
+        {
+            [JsonPropertyName("file_path")]
+            public string? FilePath { get; set; }
+        }
+
+        private class TMDbCreditsResponse
+        {
+            [JsonPropertyName("cast")]
+            public List<TMDbCast>? Cast { get; set; }
+        }
+
+        private class TMDbCast
+        {
+            [JsonPropertyName("name")]
+            public string? Name { get; set; }
+
+            [JsonPropertyName("character")]
+            public string? Character { get; set; }
+
+            [JsonPropertyName("profile_path")]
+            public string? ProfilePath { get; set; }
         }
     }
 }

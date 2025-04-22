@@ -23,7 +23,7 @@ body {
 
 .card {
     width: 100%;
-    min-height: 420px; /* Adjust as needed */
+    min-height: 420px;
     display: flex;
     flex-direction: column;
 }

@@ -15,6 +15,7 @@
                 <div class="navbar-nav">
                     <a class="nav-link" asp-controller="Movies" asp-action="Latest">Latest</a>
                     <a class="nav-link" asp-controller="Movies" asp-action="TopRated">Top Rated</a>
+                    <a class="nav-link" asp-controller="Movies" asp-action="Search">Search</a>
                 </div>
             </div>
         </nav>
@@ -24,6 +25,11 @@
             @RenderBody()
         </main>
     </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

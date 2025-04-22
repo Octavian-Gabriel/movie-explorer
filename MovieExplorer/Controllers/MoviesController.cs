@@ -29,7 +29,6 @@ namespace MovieExplorer.Controllers
             var genres = await movieService.GetGenres();
             if (!ModelState.IsValid)
             {
-                //Validatin failed, repopulate with genres
                 viewModel.GenreList = genres.Select(gen => new SelectListItem
                     {
                         Value = gen.Key.ToString(),
@@ -42,7 +41,7 @@ namespace MovieExplorer.Controllers
                 viewModel.MovieName,
                 viewModel.GenreId.HasValue ? viewModel.GenreId : null
                 );
-
+            viewModel.MovieList = movies;
             viewModel.GenreList = genres.Select(gen => new SelectListItem
             {
                 Value = gen.Key.ToString(),

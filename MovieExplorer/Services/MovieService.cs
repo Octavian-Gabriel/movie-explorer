@@ -28,7 +28,7 @@ namespace MovieExplorer.Services
 
         public async Task<IEnumerable<MovieListViewModel>> SearchMovies(string movieName, int? genreId)
         {
-            var queryParams=new List<string> { $"apiKey={_apiKey}" };
+            var queryParams=new List<string> { $"api_key={_apiKey}" };
             if (!string.IsNullOrEmpty(movieName))
             {
                 queryParams.Add($"query={Uri.EscapeDataString(movieName)}");
@@ -40,7 +40,6 @@ namespace MovieExplorer.Services
 
             var queryString=string.Join("&", queryParams);
             var url=$"search/movie?{queryString}";
-
             var response = await httpClient.GetFromJsonAsync<TMDbResponse>(url)
                 ?? throw new InvalidOperationException("Failed to retrieve movies by name and/or genre");
 

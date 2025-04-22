@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using MovieExplorer.Data;
 using MovieExplorer.Models.ViewModels;
 using System.Net.Http;
 using System.Text.Json;
@@ -7,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace MovieExplorer.Services
 {
-    public class MovieService(HttpClient httpClient, IConfiguration configuration) : IMovieService
+    public class MovieService(HttpClient httpClient, IConfiguration configuration, MovieExplorerDbContext dbContext) : IMovieService
 
     {
         private readonly string _apiKey = configuration["TMDb:ApiKey"]?? throw new ArgumentNullException(nameof(configuration));
@@ -95,13 +97,27 @@ namespace MovieExplorer.Services
                     ProfileImgUrl = string.IsNullOrEmpty(c.ProfilePath) ? null : $"https://image.tmdb.org/t/p/w185{c.ProfilePath}"
                 }) ?? Enumerable.Empty<ActorViewModel>();
 
+
+            //Get comments
+            var comments = await dbContext.Comments.
+                Where(c => c.MovieId == movieId).
+                OrderByDescending(c => c.CreatedAt).
+                Select(c => new CommentViewModel
+                {
+                    Id = c.Id,
+                    UserId = c.UserId,
+                    Content = c.Content,
+                    CreatedAt = c.CreatedAt,
+                }).ToListAsync();
+
             return new MovieDetailsViewModel
             {
                 Id = movieId,
                 Title = movieDetails.Title ?? "Unknown",
                 Description = movieDetails.Overview ?? "N/A",
                 ImageUrls = imageUrls.ToList(),
-                Actors = actors.ToList()
+                Actors = actors.ToList(),
+                Comments = comments
             };
         }
 

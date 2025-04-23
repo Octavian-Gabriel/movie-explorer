@@ -7,7 +7,11 @@ namespace MovieExplorer.Services
 {
     public class UserService(MovieExplorerDbContext dbContext) : IUserService
     {
-        
+        public async  Task<User?> FindById(int id)
+        {
+            return  await dbContext.Users.FindAsync(id);
+        }
+
         public async Task<User?> Login(string email, string password)
         {
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == email);

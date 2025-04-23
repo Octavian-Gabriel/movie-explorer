@@ -1,5 +1,8 @@
+/* Base font size */
 html {
     font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,25 +11,27 @@ html {
     }
 }
 
+/* Focus styles */
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-    position: relative;
-    min-height: 100%;
-}
-
+/* Body margin */
 body {
     margin-bottom: 60px;
 }
 
+/* Base card styles (consolidated) */
 .card {
     width: 100%;
-    min-height: 460px;
     display: flex;
     flex-direction: column;
 }
+
+    /* Movie card styles */
+    .card:not(.actor-card):not(.comment-card) {
+        min-height: 460px;
+    }
 
 .card-img-top {
     width: 100%;
@@ -47,7 +52,7 @@ body {
     margin-bottom: 0.5rem;
 }
 
-
+/* Actor card styles */
 .actor-card {
     min-height: 240px;
 }
@@ -57,7 +62,7 @@ body {
     }
 
     .actor-card .card-body {
-        height: 40px; 
+        height: 40px;
         flex-grow: 0;
         flex-shrink: 0;
         overflow: hidden;
@@ -68,19 +73,49 @@ body {
     }
 
     .actor-card .card-title {
-        font-size: 0.9rem; 
-        margin-bottom: 0.05rem; 
-        line-height: 1; 
+        font-size: 0.9rem;
+        margin-bottom: 0.05rem;
+        line-height: 1;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .actor-card .card-text {
-        font-size: 0.75rem; 
+        font-size: 0.75rem;
         margin-bottom: 0;
-        line-height: 1; 
+        line-height: 1;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+/* Comment card styles */
+.comment-card {
+    width: 100%;
+}
+
+    .comment-card .card-body {
+        padding: 0.5rem !important; /* Override Bootstrap's default padding */
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.25rem !important;
+    }
+
+        .comment-card .card-body.long-comment {
+            padding: 1rem !important; /* Larger padding for long comments */
+        }
+
+        .comment-card .card-body p.card-text {
+            margin-bottom: 0 !important;
+            word-wrap: break-word !important;
+        }
+
+            .comment-card .card-body p.card-text.short {
+                font-size: 0.9rem !important;
+            }
+
+        .comment-card .card-body small {
+            font-size: 0.75rem !important;
+            line-height: 1 !important;
+        }

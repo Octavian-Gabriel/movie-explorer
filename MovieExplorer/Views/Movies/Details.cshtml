@@ -71,15 +71,24 @@
 <div class="row mb-4">
     <div class="col-md-12">
         <h3>Comments</h3>
-        @if (Model.Comments.Any())
+        @if (Model.Comments != null && Model.Comments.Any())
         {
             <div class="mb-3">
                 @foreach (var comment in Model.Comments)
                 {
-                    <div class="card mb-2">
-                        <div class="card-body p-2">
-                            <p class="card-text">@comment.Content</p>
-                            <small class="text-muted">Posted by @comment.UserName on @comment.CreatedAt.ToString("MMM dd, yyyy")</small>
+                    <!-- Add null checks for safety -->
+                    var contentLength = !string.IsNullOrEmpty(comment.Content) ? comment.Content.Length : 0;
+                    var isLongComment = contentLength > 100;
+                    var commentCardClass = isLongComment ? "long-comment" : "";
+                    var textClass = contentLength < 50 ? "short" : "";
+
+                    <div class="card mb-2 comment-card">
+                        <div class="card-body @commentCardClass">
+                            <p class="card-text @textClass">@(comment.Content ?? "No content")</p>
+                            <small class="text-muted">
+                                Posted by @(comment.UserName ?? "Unknown") on
+                                @(comment.CreatedAt != default ? comment.CreatedAt.ToString("MMM dd, yyyy") : "Unknown date")
+                            </small>
                         </div>
                     </div>
                 }
@@ -87,7 +96,7 @@
         }
         else
         {
-            <p>No comments yet. Be the first to comment!</p>
+            <p>No comments yet.</p>
         }
 
         @if (Context.Session.GetInt32("UserId").HasValue)

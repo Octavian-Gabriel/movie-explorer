@@ -7,9 +7,8 @@ using MovieExplorer.Services.Interfaces;
 
 namespace MovieExplorer.Controllers
 {
-    public class HomeController(ILogger<HomeController> logger,IMovieService movieService) : Controller
+    public class HomeController(IMovieService movieService) : Controller
     {
-        private readonly ILogger<HomeController> _logger = logger;
 
         public async Task<IActionResult> Index()
         {

@@ -13,9 +13,9 @@
             <div class="container">
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index">MovieExplorer</a>
                 <div class="navbar-nav">
-                    <a class="nav-link" asp-controller="Movies" asp-action="Latest">Latest</a>
-                    <a class="nav-link" asp-controller="Movies" asp-action="TopRated">Top Rated</a>
-                    <a class="nav-link" asp-controller="Movies" asp-action="Search">Search</a>
+                    <a class="nav-link" id="nav-button" asp-controller="Movies" asp-action="Latest">Latest</a>
+                    <a class="nav-link" id="nav-button" asp-controller="Movies" asp-action="TopRated">Top Rated</a>
+                    <a class="nav-link" id="nav-button" asp-controller="Movies" asp-action="Search">Search</a>
                 </div>
                 <div class="navbar-nav ml-auto">
                     @if (Context.Session.GetInt32("UserId").HasValue)

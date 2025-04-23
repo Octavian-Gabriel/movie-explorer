@@ -68,4 +68,58 @@
     </div>
 </div>
 
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h3>Comments</h3>
+        @if (Model.Comments != null && Model.Comments.Any())
+        {
+            <div class="mb-3">
+                @foreach (var comment in Model.Comments)
+                {
+                    <!-- Add null checks for safety -->
+                    var contentLength = !string.IsNullOrEmpty(comment.Content) ? comment.Content.Length : 0;
+                    var isLongComment = contentLength > 100;
+                    var commentCardClass = isLongComment ? "long-comment" : "";
+                    var textClass = contentLength < 50 ? "short" : "";
+
+                    <div class="card mb-2 comment-card">
+                        <div class="card-body @commentCardClass">
+                            <p class="card-text @textClass">@(comment.Content ?? "No content")</p>
+                            <small class="text-muted">
+                                Posted by @(comment.UserName ?? "Unknown") on
+                                @(comment.CreatedAt != default ? comment.CreatedAt.ToString("MMM dd, yyyy") : "Unknown date")
+                            </small>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p>No comments yet.</p>
+        }
+
+        @if (Context.Session.GetInt32("UserId").HasValue)
+        {
+            <h4>Add a Comment</h4>
+            <form asp-action="AddComment" method="post">
+                <input type="hidden" name="movieId" value="@Model.Id" />
+                <div class="form-group">
+                    <label for="content">Comment</label>
+                    <textarea id="content" name="content" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        }
+        else
+        {
+            <p><a asp-controller="Account" asp-action="Login">Login</a> to add a comment.</p>
+        }
+    </div>
+</div>
+
 <a asp-action="Latest" class="btn btn-secondary">Back to Latest Movies</a>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

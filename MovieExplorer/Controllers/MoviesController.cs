@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MovieExplorer.Data;
 using MovieExplorer.Models;
 using MovieExplorer.Models.ViewModels;
-using MovieExplorer.Services;
+using MovieExplorer.Services.Interfaces;
+using System.Numerics;
 
 namespace MovieExplorer.Controllers
 {
-    public class MoviesController(IMovieService movieService) : Controller
+    public class MoviesController(IMovieService movieService,IUserService userService,MovieExplorerDbContext dbContext) : Controller
     {
         public async Task<IActionResult> Latest()
         {
@@ -69,6 +73,36 @@ namespace MovieExplorer.Controllers
             catch (Exception ex) {
                 return View("Error", new ErrorViewModel { RequestId = ex.Message });
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult>AddComment(int movieId, string content)
+        {
+            if (string.IsNullOrEmpty(content))
+            {
+                ModelState.AddModelError("content", "Comment cannot be empty.");
+            }
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (!userId.HasValue)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            var user= await userService.FindByIdAsync(userId.Value);
+            
+            
+            var comment = new Comment
+            {
+                User=user,
+                MovieId = movieId,
+                UserId = user.Id,
+                UserName = user.UserName ?? "Anonymus",
+                Content = content,
+                CreatedAt = DateTime.UtcNow
+            };
+            dbContext.Comments.Add(comment);
+            await dbContext.SaveChangesAsync();
+            return RedirectToAction("Details", new {id=movieId});
+
         }
     }
 }

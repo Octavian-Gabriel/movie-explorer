@@ -1,5 +1,5 @@
 ﻿using MovieExplorer.Models.ViewModels;
-namespace MovieExplorer.Services
+namespace MovieExplorer.Services.Interfaces
 {
     public interface IMovieService
     {

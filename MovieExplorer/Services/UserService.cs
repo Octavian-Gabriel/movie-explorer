@@ -18,7 +18,7 @@ namespace MovieExplorer.Services
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
            if(null == user || false==PasswordHasher.VerifyPassword(password,user.PasswordHash))
             {
-                return null;
+                throw new UnauthorizedAccessException();
             }
            return user;
         }

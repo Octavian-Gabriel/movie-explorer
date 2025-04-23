@@ -68,6 +68,10 @@ namespace MovieExplorer.Controllers
             try
             {
                 var movieDetails = await movieService.GetMovieDetails(movieId);
+                if(null == movieDetails)
+                {
+                    return NotFound();
+                }
                 return View(movieDetails);
             }
             catch (Exception ex) {

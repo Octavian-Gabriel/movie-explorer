@@ -7,12 +7,12 @@ namespace MovieExplorer.Services
 {
     public class UserService(MovieExplorerDbContext dbContext) : IUserService
     {
-        public async  Task<User?> FindById(int id)
+        public async  Task<User> FindByIdAsync(int id)
         {
             return  await dbContext.Users.FindAsync(id);
         }
 
-        public async Task<User?> Login(string email, string password)
+        public async Task<User?> LoginAsync(string email, string password)
         {
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == email);
            if(null == user || false==PasswordHasher.VerifyPassword(password,user.PasswordHash))
@@ -22,7 +22,7 @@ namespace MovieExplorer.Services
            return user;
         }
 
-        public async Task<User> Register(string username, string password, string email)
+        public async Task<User> RegisterAsync(string username, string password, string email)
         {
             if (await dbContext.Users.AnyAsync(u => u.Email == email))
             {

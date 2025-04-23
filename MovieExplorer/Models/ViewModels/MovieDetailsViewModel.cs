@@ -5,10 +5,10 @@
         public int Id { get; set; }
         public string Title { get; set; } = "Unknown";
         public string Description { get; set; } = "Unknown";
-        public List<string> ImageUrls { get; set; }= new List<string>();
-        public List<ActorViewModel> Actors { get; set; } = new List<ActorViewModel>();
-        public List<CommentViewModel> Comments { get; set; }=new List<CommentViewModel>();
-
+        public List<string> ImageUrls { get; set; }= new ();
+        public List<ActorViewModel> Actors { get; set; } = new ();
+        public List<CommentViewModel> Comments { get; set; }=new ();
+        public List<string> Genres { get; set; } = new(); 
     }
     public class ActorViewModel
     {

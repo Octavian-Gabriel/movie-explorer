@@ -164,3 +164,22 @@ h1{
     .card:not(.actor-card):not(.comment-card):hover {
         box-shadow: 0 32px 64px rgba(0, 0, 0, 0.5); 
     }
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0; 
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+.footer {
+    flex-shrink: 0;
+}

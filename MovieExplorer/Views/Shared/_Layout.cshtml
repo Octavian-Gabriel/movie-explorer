@@ -43,5 +43,16 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @RenderSection("Scripts", required: false)
+
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+
+    <footer class="footer bg-light py-3 mt-auto">
+        <div class="container text-center">
+            <span class="text-muted">&copy; @DateTime.Now.Year - MovieExplorer - All Rights Reserved</span>
+        </div>
+    </footer>
+
 </body>
 </html>

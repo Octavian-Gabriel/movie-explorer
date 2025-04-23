@@ -106,6 +106,7 @@ namespace MovieExplorer.Services
                 {
                     Id = c.Id,
                     UserId = c.UserId,
+                    UserName=c.UserName,
                     Content = c.Content,
                     CreatedAt = c.CreatedAt,
                 }).ToListAsync();

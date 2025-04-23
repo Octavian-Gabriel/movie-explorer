@@ -22,7 +22,7 @@ namespace MovieExplorer.Controllers
             }
             try
             {
-                var user = await userService.Register(username, password, email);
+                var user = await userService.RegisterAsync(username, password, email);
                 HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("UserName", user.UserName);
                 return RedirectToAction("Index", "Home");
@@ -46,7 +46,7 @@ namespace MovieExplorer.Controllers
         {
             try
             {
-                var user = await userService.Login(email, password);
+                var user = await userService.LoginAsync(email, password);
                 if(null == user)
                 {
                     ModelState.AddModelError("", "Invalid email or password");

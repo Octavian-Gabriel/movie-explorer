@@ -1,34 +1,34 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieExplorer.Data;
+using MovieExplorer.Models.DataTransferObjects;
 using MovieExplorer.Models.ViewModels;
 using MovieExplorer.Services.Interfaces;
-using MovieExplorer.Models.DataTransferObjects;
 
 namespace MovieExplorer.Services
 {
     public class MovieService(HttpClient httpClient, IConfiguration configuration, MovieExplorerDbContext dbContext) : IMovieService
 
     {
-        private readonly string _apiKey = configuration["TMDb:ApiKey"]?? throw new ArgumentNullException(nameof(configuration));
+        private readonly string _apiKey = configuration["TMDb:ApiKey"] ?? throw new ArgumentNullException(nameof(configuration));
         private static readonly Dictionary<int, string> _genreCache = [];
-        public async Task<IEnumerable<MovieListViewModel>> GetLatestMovies()
+        public async Task<IEnumerable<MovieListViewModel>> GetLatestMovies(int page = 1)
         {
-            var response = await httpClient.GetFromJsonAsync<TMDbResponse>($"movie/now_playing?api_key={_apiKey}")
+            var response = await httpClient.GetFromJsonAsync<TMDbResponse>($"movie/now_playing?api_key={_apiKey}&page={page}")
                 ?? throw new InvalidOperationException("Failed to retrieve latest movies.");
             return ParseResponse(response);
         }
 
 
-        public async Task<IEnumerable<MovieListViewModel>> GetTopRatedMovies()
+        public async Task<IEnumerable<MovieListViewModel>> GetTopRatedMovies(int page = 1)
         {
-            var response = await httpClient.GetFromJsonAsync<TMDbResponse>($"movie/top_rated?api_key={_apiKey}")
+            var response = await httpClient.GetFromJsonAsync<TMDbResponse>($"movie/top_rated?api_key={_apiKey}&page={page}")
                 ?? throw new InvalidOperationException("Failed to retrieve top rated movies.");
             return ParseResponse(response);
         }
 
         public async Task<IEnumerable<MovieListViewModel>> SearchMovies(string movieName, int? genreId)
         {
-            var queryParams=new List<string> { $"api_key={_apiKey}" };
+            var queryParams = new List<string> { $"api_key={_apiKey}" };
             if (!string.IsNullOrEmpty(movieName))
             {
                 queryParams.Add($"query={Uri.EscapeDataString(movieName)}");
@@ -38,8 +38,8 @@ namespace MovieExplorer.Services
                 queryParams.Add($"with_genres={genreId.Value}");
             }
 
-            var queryString=string.Join("&", queryParams);
-            var url=$"search/movie?{queryString}";
+            var queryString = string.Join("&", queryParams);
+            var url = $"search/movie?{queryString}";
             var response = await httpClient.GetFromJsonAsync<TMDbResponse>(url)
                 ?? throw new InvalidOperationException("Failed to retrieve movies by name and/or genre");
 
@@ -53,9 +53,9 @@ namespace MovieExplorer.Services
             }
             var response = await httpClient.GetFromJsonAsync<TMDbGenreListResponse>($"genre/movie/list?api_key={_apiKey}")
                 ?? throw new InvalidOperationException("Failed to retrieve genres list!");
-            foreach (var genre in response.Genres )
+            foreach (var genre in response.Genres)
             {
-                if(genre.Id!=null && !string.IsNullOrEmpty(genre.GenreName))
+                if (genre.Id != null && !string.IsNullOrEmpty(genre.GenreName))
                 {
                     _genreCache.Add((int)genre.Id, genre.GenreName);
                 }
@@ -83,10 +83,10 @@ namespace MovieExplorer.Services
             imageUrls.AddRange(imagesResponse.Posters?
                 .Take(1)
                 .Select(p => $"https://image.tmdb.org/t/p/w500{p.FilePath}") ?? Enumerable.Empty<string>());
-            
+
 
             var actors = creditsResponse.Cast?
-                .Take(10) 
+                .Take(10)
                 .Select(c => new ActorViewModel
                 {
                     Name = c.Name ?? "Unknown",
@@ -103,7 +103,7 @@ namespace MovieExplorer.Services
                 {
                     Id = c.Id,
                     UserId = c.UserId,
-                    UserName=c.UserName,
+                    UserName = c.UserName,
                     Content = c.Content,
                     CreatedAt = c.CreatedAt,
                 }).ToListAsync();

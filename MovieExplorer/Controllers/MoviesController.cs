@@ -14,13 +14,13 @@ namespace MovieExplorer.Controllers
     {
         public async Task<IActionResult> Latest()
         {
-            var latestMovies = await movieService.GetLatestMovies();
+            var latestMovies = await movieService.GetLatestMovies(1);
             return View(latestMovies);
         }
 
         public async Task<IActionResult> TopRated()
         {
-            var topMovies = await movieService.GetTopRatedMovies();
+            var topMovies = await movieService.GetTopRatedMovies(1);
             return View(topMovies);
         }
         [HttpPost]

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieExplorer.Data;
 using MovieExplorer.Models;
+using MovieExplorer.Services.Interfaces;
 using System.Diagnostics;
 
 namespace MovieExplorer.Services

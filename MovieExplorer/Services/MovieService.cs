@@ -1,11 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MovieExplorer.Data;
 using MovieExplorer.Models.ViewModels;
-using System.Net.Http;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
+using MovieExplorer.Services.Interfaces;
+using MovieExplorer.Models.DataTransferObjects;
 
 namespace MovieExplorer.Services
 {
@@ -132,80 +129,6 @@ namespace MovieExplorer.Services
                 ? "https://via.placeholder.com/200x300?text=No+Poster" : $"https://image.tmdb.org/t/p/w200{r.PosterPath}",
                 ReleaseDate = r.ReleaseDate ?? "N/A"
             }) ?? Enumerable.Empty<MovieListViewModel>();
-        }
-        private class TMDbResponse
-        {
-            [JsonPropertyName("results")]
-            public  List<TMDbMovie>? Results { get; set; }
-        }
-
-        private class TMDbMovie
-        {
-            [JsonPropertyName("id")]
-            public int Id { get; set; }
-            [JsonPropertyName("title")]
-            public string Title { get; set; } = string.Empty;
-            [JsonPropertyName("poster_path")]
-            public string PosterPath {  get; set; }=string.Empty;
-            [JsonPropertyName("release_date")]
-            public string ReleaseDate { get; set; } = string.Empty;
-        }
-
-        private class TMDbGenreListResponse
-        {
-            public List<TMDbMovieGenre> Genres { get; set; }
-        }
-
-        private class TMDbMovieGenre
-        {
-            [JsonPropertyName("id")]
-            public int? Id { get; set; }
-            [JsonPropertyName("name")]
-            public string? GenreName { get; set; }
-        }
-        private class TMDbMovieDetails
-        {
-            [JsonPropertyName("id")]
-            public int? Id { get; set; }
-
-            [JsonPropertyName("title")]
-            public string? Title { get; set; }
-
-            [JsonPropertyName("overview")]
-            public string? Overview { get; set; }
-        }
-
-        private class TMDbImagesResponse
-        {
-            [JsonPropertyName("posters")]
-            public List<TMDbImage>? Posters { get; set; }
-
-            [JsonPropertyName("backdrops")]
-            public List<TMDbImage>? Backdrops { get; set; }
-        }
-
-        private class TMDbImage
-        {
-            [JsonPropertyName("file_path")]
-            public string? FilePath { get; set; }
-        }
-
-        private class TMDbCreditsResponse
-        {
-            [JsonPropertyName("cast")]
-            public List<TMDbCast>? Cast { get; set; }
-        }
-
-        private class TMDbCast
-        {
-            [JsonPropertyName("name")]
-            public string? Name { get; set; }
-
-            [JsonPropertyName("character")]
-            public string? Character { get; set; }
-
-            [JsonPropertyName("profile_path")]
-            public string? ProfilePath { get; set; }
         }
     }
 }

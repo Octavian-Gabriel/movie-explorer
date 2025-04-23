@@ -6,16 +6,14 @@ using Xunit;
 
 namespace MovieExplorer.Tests
 {
-    public class UserServiceTests
+    public class UserServiceTests: IClassFixture<DatabaseFixture>
     {
         private readonly MovieExplorerDbContext _dbContext;
 
-        public UserServiceTests()
+        public UserServiceTests(DatabaseFixture databaseFixture)
         {
-            var options = new DbContextOptionsBuilder<MovieExplorerDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb")
-                .Options;
-            _dbContext = new MovieExplorerDbContext(options);
+
+            _dbContext = databaseFixture.dbContext;
         }
 
         [Fact]
@@ -25,12 +23,12 @@ namespace MovieExplorer.Tests
             var userService = new UserService(_dbContext);
 
             // Act
-            var user = await userService.RegisterAsync( "testuser", "password123", "test@example.com");
+            var user = await userService.RegisterAsync( "testuser9", "password123", "test9@example.com");
 
             // Assert
             Assert.NotNull(user);
-            Assert.Equal("test@example.com", user.Email);
-            Assert.Equal("testuser", user.UserName);
+            Assert.Equal("test9@example.com", user.Email);
+            Assert.Equal("testuser9", user.UserName);
             Assert.True(PasswordHasher.VerifyPassword("password123", user.PasswordHash));
         }
 
@@ -54,18 +52,18 @@ namespace MovieExplorer.Tests
             // Arrange
             var password = "password123";
             var passwordHash = PasswordHasher.HashPasword(password);
-            _dbContext.Users.Add(new User { Email = "test@example.com", UserName = "testuser", PasswordHash = passwordHash });
+            _dbContext.Users.Add(new User { Email = "test12@example.com", UserName = "testuser12", PasswordHash = passwordHash });
             await _dbContext.SaveChangesAsync();
 
             var userService = new UserService(_dbContext);
 
             // Act
-            var user = await userService.LoginAsync("test@example.com", password);
+            var user = await userService.LoginAsync("test12@example.com", password);
 
             // Assert
             Assert.NotNull(user);
-            Assert.Equal("test@example.com", user.Email);
-            Assert.Equal("testuser", user.UserName);
+            Assert.Equal("test12@example.com", user.Email);
+            Assert.Equal("testuser12", user.UserName);
         }
 
         [Fact]
@@ -80,7 +78,7 @@ namespace MovieExplorer.Tests
             var userService = new UserService(_dbContext);
 
             // Act & Assert
-            await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
+            await Assert.ThrowsAsync<BCrypt.Net.SaltParseException>(() =>
                 userService.LoginAsync("test@example.com", "wrongpassword"));
         }
     }

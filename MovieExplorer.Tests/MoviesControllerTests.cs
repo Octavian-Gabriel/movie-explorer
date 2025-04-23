@@ -12,22 +12,18 @@ using Xunit;
 
 namespace MovieExplorer.Tests
 {
-    public class MoviesControllerTests:IDisposable
+    public class MoviesControllerTests:IClassFixture<DatabaseFixture>
     {
         private readonly Mock<IMovieService> _movieServiceMock;
         private readonly Mock<IUserService> _userServiceMock;
         private readonly MovieExplorerDbContext _dbContext;
 
 
-        public MoviesControllerTests()
+        public MoviesControllerTests(DatabaseFixture databaseFixture)
         {
             _movieServiceMock = new Mock<IMovieService>();
             _userServiceMock = new Mock<IUserService>();
-
-            var options = new DbContextOptionsBuilder<MovieExplorerDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb")
-                .Options;
-            _dbContext = new MovieExplorerDbContext(options);
+            _dbContext = databaseFixture.dbContext;
         }
 
         [Fact]
@@ -106,11 +102,6 @@ namespace MovieExplorer.Tests
             Assert.Equal("Great movie!", comment.Content);
             Assert.Equal(userId, comment.UserId);
             Assert.Equal("testuser", comment.UserName);
-        }
-        void IDisposable.Dispose()
-        {
-            _dbContext.Database.EnsureDeleted();
-            _dbContext.Dispose();
         }
     }
 

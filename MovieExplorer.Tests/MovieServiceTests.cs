@@ -17,7 +17,7 @@ using Xunit;
 
 namespace MovieExplorer.Tests
 {
-    public class MovieServiceTests
+    public class MovieServiceTests:IClassFixture<DatabaseFixture>
     {
 
         private readonly MovieExplorerDbContext _dbContext;
@@ -25,13 +25,10 @@ namespace MovieExplorer.Tests
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
 
-        public MovieServiceTests()
+        public MovieServiceTests(DatabaseFixture databaseFixture)
         {
             // Set up in-memory database
-            var options = new DbContextOptionsBuilder<MovieExplorerDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDb")
-                .Options;
-            _dbContext = new MovieExplorerDbContext(options);
+            _dbContext = databaseFixture.dbContext;
 
             // Set up HttpClient mock
             _httpMessageHandlerMock = new Mock<HttpMessageHandler>();

@@ -10,7 +10,7 @@ using System.Numerics;
 
 namespace MovieExplorer.Controllers
 {
-    public class MoviesController(IMovieService movieService,MovieExplorerDbContext dbContext,UserManager<IdentityUser> userManager) : Controller
+    public class MoviesController(IMovieService movieService,IUserService userService,MovieExplorerDbContext dbContext) : Controller
     {
         public async Task<IActionResult> Latest()
         {
@@ -74,27 +74,25 @@ namespace MovieExplorer.Controllers
                 return View("Error", new ErrorViewModel { RequestId = ex.Message });
             }
         }
+
         [HttpPost]
-        [Authorize]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult>AddComment(int movieId, string content)
         {
             if (string.IsNullOrEmpty(content))
             {
                 ModelState.AddModelError("content", "Comment cannot be empty.");
             }
-            if(!ModelState.IsValid)
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (!userId.HasValue)
             {
-                var movieDetails = await movieService.GetMovieDetails(movieId);
-                return View("Details", movieDetails);
+                return RedirectToAction("Login", "Account");
             }
-            var user= await userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return Unauthorized();
-            }
+            var user= await userService.FindByIdAsync(userId.Value);
+            
+            
             var comment = new Comment
             {
+                User=user,
                 MovieId = movieId,
                 UserId = user.Id,
                 UserName = user.UserName ?? "Anonymus",

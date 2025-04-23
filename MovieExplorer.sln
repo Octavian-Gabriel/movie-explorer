@@ -5,7 +5,7 @@ VisualStudioVersion = 17.13.35931.197 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieExplorer", "MovieExplorer\MovieExplorer.csproj", "{464CE1CE-1386-491F-9AEA-CB0BCB95B278}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieExplorerTest", "MovieExplorerTest\MovieExplorerTest.csproj", "{B53B3376-373E-4F73-996E-24FCC78D9D2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieExplorer.Tests", "MovieExplorerTest\MovieExplorer.Tests.csproj", "{B53B3376-373E-4F73-996E-24FCC78D9D2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MovieExplorer.Models;
 using MovieExplorer.Models.ViewModels;
+using MovieExplorer.Services;
 using MovieExplorer.Services.Interfaces;
 
 namespace MovieExplorer.Controllers
@@ -12,7 +13,7 @@ namespace MovieExplorer.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var latestMovies=await movieService.GetLatestMovies();
+            var latestMovies=await movieService.GetLatestMovies(1);
             return View(latestMovies);
         }
 
@@ -20,6 +21,18 @@ namespace MovieExplorer.Controllers
         {
             return View();
         }
+        public async Task<IActionResult> LoadMoreLatestMovies(int page)
+        {
+            var movies = await movieService.GetLatestMovies(page);
+            return PartialView("_MovieListPartial", movies);
+        }
+
+        public async Task<IActionResult> LoadMoreTopRatedMovies(int page)
+        {
+            var movies = await movieService.GetTopRatedMovies(page);
+            return PartialView("_MovieListPartial", movies);
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

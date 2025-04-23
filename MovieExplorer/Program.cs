@@ -12,19 +12,22 @@ namespace MovieExplorer
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add HttpClient for TMDb API
             builder.Services.AddHttpClient<IMovieService, MovieService>(
                 client=>
                 {
                     client.BaseAddress = new Uri(builder.Configuration["TMDb:BaseUrl"]);
                 }
                 );
-
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromSeconds(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             builder.Services.AddDbContext<MovieExplorerDbContext>(options =>
             options.UseSqlite(builder.Configuration.GetConnectionString("MovieExplorerDbContext")));
 
             builder.Services.AddScoped<IUserService, UserService>();
-
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -32,7 +35,7 @@ namespace MovieExplorer
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseRouting();
 
             app.MapControllerRoute(

@@ -84,7 +84,7 @@ namespace MovieExplorer.Services
                 .Take(1)
                 .Select(p => $"https://image.tmdb.org/t/p/w500{p.FilePath}") ?? Enumerable.Empty<string>());
 
-
+            var genres = movieDetails.Genres.Select(gen => gen.GenreName).ToList<string>();
             var actors = creditsResponse.Cast?
                 .Take(10)
                 .Select(c => new ActorViewModel
@@ -115,7 +115,8 @@ namespace MovieExplorer.Services
                 Description = movieDetails.Overview ?? "N/A",
                 ImageUrls = imageUrls.ToList(),
                 Actors = actors.ToList(),
-                Comments = comments
+                Comments = comments,
+                Genres=genres
             };
         }
 

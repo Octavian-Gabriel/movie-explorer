@@ -47,6 +47,8 @@ namespace MovieExplorer.Models.DataTransferObjects
 
         [JsonPropertyName("overview")]
         public string? Overview { get; set; }
+        [JsonPropertyName("genres")]
+        public List<TMDbMovieGenre> Genres { get; set; }
     }
 
     public class TMDbImagesResponse

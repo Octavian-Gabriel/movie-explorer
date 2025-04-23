@@ -14,7 +14,7 @@ namespace MovieExplorer.Services
 
         public async Task<User?> LoginAsync(string email, string password)
         {
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == email);
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
            if(null == user || false==PasswordHasher.VerifyPassword(password,user.PasswordHash))
             {
                 return null;

@@ -1,5 +1,5 @@
 ﻿using MovieExplorer.Models;
-namespace MovieExplorer.Services
+namespace MovieExplorer.Services.Interfaces
 {
     public interface IUserService
     {

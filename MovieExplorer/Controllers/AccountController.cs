@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MovieExplorer.Services;
+using MovieExplorer.Services.Interfaces;
 
 namespace MovieExplorer.Controllers
 {

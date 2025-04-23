@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MovieExplorer.Models;
 using MovieExplorer.Models.ViewModels;
-using MovieExplorer.Services;
+using MovieExplorer.Services.Interfaces;
 
 namespace MovieExplorer.Controllers
 {

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using MovieExplorer.Data;
 using MovieExplorer.Models;
 using MovieExplorer.Models.ViewModels;
-using MovieExplorer.Services;
+using MovieExplorer.Services.Interfaces;
 using System.Numerics;
 
 namespace MovieExplorer.Controllers

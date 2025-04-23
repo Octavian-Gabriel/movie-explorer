@@ -8,7 +8,7 @@ namespace MovieExplorer.Services
     public class UserService(MovieExplorerDbContext dbContext) : IUserService
     {
         
-        public async Task<User> Login(string email, string password)
+        public async Task<User?> Login(string email, string password)
         {
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == email);
            if(null == user || false==PasswordHasher.VerifyPassword(password,user.PasswordHash))

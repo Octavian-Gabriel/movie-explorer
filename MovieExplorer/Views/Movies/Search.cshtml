@@ -42,7 +42,7 @@
         }
     </div>
 }
-else if (Model.MovieList != null)
+else if (Model.MovieList != null&&(!string.IsNullOrEmpty(Model.MovieName) || Model.GenreId.HasValue))
 {
     <p class="text-center mt-5">No movies found.</p>
 }

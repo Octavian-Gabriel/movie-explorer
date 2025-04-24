@@ -4,10 +4,9 @@
     ViewData["Title"] = "Search Movies";
 }
 
-<h1>Search Movies</h1>
-
-<div class="row mb-4">
-    <div class="col-md-6">
+<div class="d-flex justify-content-center mt-5">
+    <div class="col-md-6 form-container">
+        <h1 class="text-center">Search Movies</h1>
         <form asp-action="Search" method="post">
             <div class="form-group mb-3">
                 <label asp-for="MovieName" class="form-label">Search by Name</label>
@@ -19,35 +18,35 @@
                 <select asp-for="GenreId" asp-items="Model.GenreList" class="form-select"></select>
                 <span asp-validation-for="GenreId" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="submit" class="btn btn-primary w-100">Search</button>
         </form>
     </div>
 </div>
 
 @if (Model.MovieList.Any())
 {
-        <h2>Search Results</h2>
-        <div class="row">
+    <h2 class="text-center mt-5">Search Results</h2>
+    <div class="row">
         @foreach (var movie in Model.MovieList)
         {
-                    <div class="col-md-3 mb-4">
-                        <div class="card">
-                            <img src="@movie.PosterPath" class="card-img-top" alt="@movie.Title" />
-                            <div class="card-body">
-                                <h5 class="card-title">@movie.Title</h5>
-                                <p class="card-text">Release: @movie.ReleaseDate</p>
-                                <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-primary">Details</a>
-                            </div>
-                        </div>
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <img src="@movie.PosterPath" class="card-img-top" alt="@movie.Title" />
+                    <div class="card-body">
+                        <h5 class="card-title">@movie.Title</h5>
+                        <p class="card-text">Release: @movie.ReleaseDate</p>
+                        <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-primary">Details</a>
                     </div>
+                </div>
+            </div>
         }
-        </div>
+    </div>
 }
 else if (Model.MovieList != null)
 {
-        <p>No movies found.</p>
+    <p class="text-center mt-5">No movies found.</p>
 }
 
 @section Scripts {
-        <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
 }

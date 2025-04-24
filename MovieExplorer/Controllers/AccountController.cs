@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MovieExplorer.Services.Interfaces;
-using MovieExplorer.Models.ViewModels;
 using MovieExplorer.Models;
+using MovieExplorer.Models.ViewModels;
+using MovieExplorer.Services.Interfaces;
 namespace MovieExplorer.Controllers
 {
     public class AccountController(IUserService userService) : Controller
@@ -50,7 +50,7 @@ namespace MovieExplorer.Controllers
             try
             {
                 var user = await userService.LoginAsync(email, password);
-                if(null == user)
+                if (null == user)
                 {
                     ModelState.AddModelError("", "Invalid email or password");
                     return View();

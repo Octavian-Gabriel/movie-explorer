@@ -2,25 +2,24 @@
 using MovieExplorer.Data;
 using MovieExplorer.Models;
 using MovieExplorer.Services.Interfaces;
-using System.Diagnostics;
 
 namespace MovieExplorer.Services
 {
     public class UserService(MovieExplorerDbContext dbContext) : IUserService
     {
-        public async  Task<User> FindByIdAsync(int id)
+        public async Task<User> FindByIdAsync(int id)
         {
-            return  await dbContext.Users.FindAsync(id);
+            return await dbContext.Users.FindAsync(id);
         }
 
         public async Task<User?> LoginAsync(string email, string password)
         {
             var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
-           if(null == user || false==PasswordHasher.VerifyPassword(password,user.PasswordHash))
+            if (null == user || false == PasswordHasher.VerifyPassword(password, user.PasswordHash))
             {
                 throw new UnauthorizedAccessException();
             }
-           return user;
+            return user;
         }
 
         public async Task<User> RegisterAsync(string username, string password, string email)

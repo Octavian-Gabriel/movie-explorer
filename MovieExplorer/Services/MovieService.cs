@@ -116,7 +116,7 @@ namespace MovieExplorer.Services
                 ImageUrls = imageUrls.ToList(),
                 Actors = actors.ToList(),
                 Comments = comments,
-                Genres=genres
+                Genres = genres
             };
         }
 

@@ -1,19 +1,16 @@
-using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MovieExplorer.Models;
-using MovieExplorer.Models.ViewModels;
-using MovieExplorer.Services;
 using MovieExplorer.Services.Interfaces;
+using System.Diagnostics;
 
 namespace MovieExplorer.Controllers
 {
     public class HomeController(IMovieService movieService) : Controller
     {
 
-        public async Task<IActionResult> Index(int page =1 )
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var latestMovies=await movieService.GetLatestMovies(page);
+            var latestMovies = await movieService.GetLatestMovies(page);
             ViewBag.CurrentPage = page;
             return View(latestMovies);
         }

@@ -45,22 +45,24 @@ namespace MovieExplorer.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(loginViewModel);
+            }
             try
             {
-                var user = await userService.LoginAsync(email, password);
-                if (null == user)
+                var user = await userService.LoginAsync(loginViewModel.Email, loginViewModel.Password);
+                if (null != user)
                 {
-                    ModelState.AddModelError("", "Invalid email or password");
-                    return View();
+                    UpdateSessionWithUserInfo(user);
                 }
-                UpdateSessionWithUserInfo(user);
                 return RedirectToAction("Index", "Home");
             }
-            catch (InvalidOperationException ex)
+            catch (UnauthorizedAccessException ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                ModelState.AddModelError("", "Email or password are incorect!");
                 return View();
             }
         }

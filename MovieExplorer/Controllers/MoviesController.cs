@@ -29,21 +29,16 @@ namespace MovieExplorer.Controllers
         public async Task<IActionResult> Search(MovieSearchViewModel viewModel)
         {
             var genres = await movieService.GetGenres();
-            if (!ModelState.IsValid)
+            if (!string.IsNullOrEmpty(viewModel.MovieName) || viewModel.GenreId.HasValue)
             {
-                viewModel.GenreList = genres.Select(gen => new SelectListItem
-                    {
-                        Value = gen.Key.ToString(),
-                        Text = gen.Value
-                    }).Prepend(new SelectListItem { Value = "", Text = "All Genres" });
-                return View(viewModel);
+                var movies = await movieService.SearchMovies(viewModel.MovieName, viewModel.GenreId.HasValue ? viewModel.GenreId : null);
+                viewModel.MovieList = movies;
+            }
+            else
+            {
+                viewModel.MovieList =Enumerable.Empty<MovieListViewModel>();
             }
 
-            var movies = await movieService.SearchMovies(
-                viewModel.MovieName,
-                viewModel.GenreId.HasValue ? viewModel.GenreId : null
-                );
-            viewModel.MovieList = movies;
             viewModel.GenreList = genres.Select(gen => new SelectListItem
             {
                 Value = gen.Key.ToString(),

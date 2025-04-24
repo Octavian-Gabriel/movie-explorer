@@ -39,7 +39,7 @@ namespace MovieExplorer.Services
             }
 
             var queryString = string.Join("&", queryParams);
-            var url = $"search/movie?{queryString}";
+            var url = $"discover/movie?{queryString}";
             var response = await httpClient.GetFromJsonAsync<TMDbResponse>(url)
                 ?? throw new InvalidOperationException("Failed to retrieve movies by name and/or genre");
 

@@ -7,16 +7,14 @@
 <div class="d-flex justify-content-center mt-5">
     <div class="col-md-6 form-container">
         <h1 class="text-center">Search Movies</h1>
-        <form asp-action="Search" method="post">
+        <form asp-action="Search" method="post" novalidate>
             <div class="form-group mb-3">
                 <label asp-for="MovieName" class="form-label">Search by Name</label>
                 <input asp-for="MovieName" class="form-control" placeholder="Enter movie name..." />
-                <span asp-validation-for="MovieName" class="text-danger"></span>
             </div>
             <div class="form-group mb-3">
                 <label asp-for="GenreId" class="form-label">Genre</label>
                 <select asp-for="GenreId" asp-items="Model.GenreList" class="form-select"></select>
-                <span asp-validation-for="GenreId" class="text-danger"></span>
             </div>
             <button type="submit" class="btn btn-primary w-100">Search</button>
         </form>
@@ -45,8 +43,4 @@
 else if (Model.MovieList != null&&(!string.IsNullOrEmpty(Model.MovieName) || Model.GenreId.HasValue))
 {
     <p class="text-center mt-5">No movies found.</p>
-}
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
 }

@@ -11,9 +11,10 @@ namespace MovieExplorer.Controllers
     public class HomeController(IMovieService movieService) : Controller
     {
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page =1 )
         {
-            var latestMovies=await movieService.GetLatestMovies(1);
+            var latestMovies=await movieService.GetLatestMovies(page);
+            ViewBag.CurrentPage = page;
             return View(latestMovies);
         }
 

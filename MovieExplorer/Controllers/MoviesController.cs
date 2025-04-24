@@ -12,15 +12,17 @@ namespace MovieExplorer.Controllers
 {
     public class MoviesController(IMovieService movieService,IUserService userService,MovieExplorerDbContext dbContext) : Controller
     {
-        public async Task<IActionResult> Latest()
+        public async Task<IActionResult> Latest(int page=1)
         {
-            var latestMovies = await movieService.GetLatestMovies(1);
+            var latestMovies = await movieService.GetLatestMovies(page);
+            ViewBag.CurrentPage=page;
             return View(latestMovies);
         }
 
-        public async Task<IActionResult> TopRated()
+        public async Task<IActionResult> TopRated(int page=1)
         {
-            var topMovies = await movieService.GetTopRatedMovies(1);
+            var topMovies = await movieService.GetTopRatedMovies(page);
+            ViewBag.CurrentPage=page;
             return View(topMovies);
         }
         [HttpPost]

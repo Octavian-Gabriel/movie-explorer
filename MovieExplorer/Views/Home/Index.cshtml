@@ -15,7 +15,7 @@
         @await Html.PartialAsync("_MovieListPartial", Model)
     </div>
     <div class="text-center mt-4">
-        <button id="load-more-latest" class="btn btn-secondary btn-lg btn-wide" data-page="1">Load More</button>
+        <button id="load-more-latest" class="btn btn-secondary btn-lg btn-wide" data-page="@ViewBag.CurrentPage">Load More</button>
     </div>
 </div>
 
@@ -24,10 +24,18 @@
         document.getElementById("load-more-latest").addEventListener("click", async function () {
             const button = this;
             const page = parseInt(button.getAttribute("data-page")) + 1;
+            history.pushState({ page: page }, "", `/Movies/Latest?page=${page}`);
             const response = await fetch(`/Home/LoadMoreLatestMovies?page=${page}`);
             const html = await response.text();
             document.getElementById("latest-movies").insertAdjacentHTML("beforeend", html);
             button.setAttribute("data-page", page);
+        });
+        window.addEventListener("popstate", async function (event) {
+            const page = event.state?.page || 1;
+            const response = await fetch(`/Home/LoadMoreLatestMovies?page=${page}`);
+            const html = await response.text();
+            document.getElementById("latest-movies").innerHTML = html;
+            document.getElementById("load-more-latest").setAttribute("data-page", page);
         });
     </script>
 }

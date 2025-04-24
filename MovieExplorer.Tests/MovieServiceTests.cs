@@ -1,23 +1,16 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
 using MovieExplorer.Data;
 using MovieExplorer.Models;
 using MovieExplorer.Models.DataTransferObjects;
-using MovieExplorer.Models.ViewModels;
 using MovieExplorer.Services;
 using System.Net;
-using System.Net.Http;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace MovieExplorer.Tests
 {
-    public class MovieServiceTests:IClassFixture<DatabaseFixture>
+    public class MovieServiceTests : IClassFixture<DatabaseFixture>
     {
 
         private readonly MovieExplorerDbContext _dbContext;
@@ -45,11 +38,11 @@ namespace MovieExplorer.Tests
         public async Task GetLatestMovies_ReturnsMovieListViewModels()
         {
             // Arrange
-            var tmdbResponse = new TMDbResponse
+            var tmdbResponse = new TMDbResponseDto
             {
-                Results = new List<TMDbMovie>
+                Results = new List<TMDbMovieDto>
                 {
-                    new TMDbMovie { Id = 1, Title = "Movie 1", PosterPath = "/poster1.jpg", ReleaseDate = "2023-01-01" }
+                    new TMDbMovieDto { Id = 1, Title = "Movie 1", PosterPath = "/poster1.jpg", ReleaseDate = "2023-01-01" }
                 }
             };
             var jsonResponse = JsonSerializer.Serialize(tmdbResponse);
@@ -82,7 +75,15 @@ namespace MovieExplorer.Tests
         {
             // Arrange
             // Mock movie details response
-            var movieDetails = new TMDbMovieDetails { Id = 1, Title = "Movie 1", Overview = "Overview" };
+            var genreList = new List<TMDbMovieGenreDto>
+                {
+                    new TMDbMovieGenreDto
+                    {
+                        Id = 28, // Example: ID for "Action" genre
+                        GenreName = "Action"
+                    }
+                };
+            var movieDetails = new TMDbMovieDetailsDto { Id = 1, Title = "Movie 1", Overview = "Overview", Genres = genreList };
             _httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
                     "SendAsync",
@@ -95,10 +96,10 @@ namespace MovieExplorer.Tests
                 });
 
             // Mock images response
-            var imagesResponse = new TMDbImagesResponse
+            var imagesResponse = new TMDbImagesDto
             {
-                Backdrops = new List<TMDbImage> { new TMDbImage { FilePath = "/backdrop.jpg" } },
-                Posters = new List<TMDbImage> { new TMDbImage { FilePath = "/poster.jpg" } }
+                Backdrops = new List<TMDbImageDto> { new TMDbImageDto { FilePath = "/backdrop.jpg" } },
+                Posters = new List<TMDbImageDto> { new TMDbImageDto { FilePath = "/poster.jpg" } }
             };
             _httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -112,9 +113,9 @@ namespace MovieExplorer.Tests
                 });
 
             // Mock credits response
-            var creditsResponse = new TMDbCreditsResponse
+            var creditsResponse = new TMDbCreditsDto
             {
-                Cast = new List<TMDbCast> { new TMDbCast { Name = "Actor 1", Character = "Character 1", ProfilePath = "/actor.jpg" } }
+                Cast = new List<TMDbCastDto> { new TMDbCastDto { Name = "Actor 1", Character = "Character 1", ProfilePath = "/actor.jpg" } }
             };
             _httpMessageHandlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -130,8 +131,8 @@ namespace MovieExplorer.Tests
             {
                 Email = "Test",
                 Id = 1,
-                UserName="Test",
-                PasswordHash="test"
+                UserName = "Test",
+                PasswordHash = "test"
             };
             // Add a comment to the in-memory database
             _dbContext.Comments.Add(new Comment
@@ -139,7 +140,7 @@ namespace MovieExplorer.Tests
                 Id = 1,
                 MovieId = 1,
                 UserId = 1,
-                User= testUser,
+                User = testUser,
                 UserName = "testuser",
                 Content = "Great movie!",
                 CreatedAt = DateTime.UtcNow

@@ -13,7 +13,7 @@ namespace MovieExplorer.Services
         private static readonly Dictionary<int, string> _genreCache = [];
         public async Task<IEnumerable<MovieListViewModel>> GetLatestMovies(int page = 1)
         {
-            var response = await httpClient.GetFromJsonAsync<TMDbResponse>($"movie/now_playing?api_key={_apiKey}&page={page}")
+            var response = await httpClient.GetFromJsonAsync<TMDbResponseDto>($"movie/now_playing?api_key={_apiKey}&page={page}")
                 ?? throw new InvalidOperationException("Failed to retrieve latest movies.");
             return ParseResponse(response);
         }
@@ -21,7 +21,7 @@ namespace MovieExplorer.Services
 
         public async Task<IEnumerable<MovieListViewModel>> GetTopRatedMovies(int page = 1)
         {
-            var response = await httpClient.GetFromJsonAsync<TMDbResponse>($"movie/top_rated?api_key={_apiKey}&page={page}")
+            var response = await httpClient.GetFromJsonAsync<TMDbResponseDto>($"movie/top_rated?api_key={_apiKey}&page={page}")
                 ?? throw new InvalidOperationException("Failed to retrieve top rated movies.");
             return ParseResponse(response);
         }
@@ -40,7 +40,7 @@ namespace MovieExplorer.Services
 
             var queryString = string.Join("&", queryParams);
             var url = $"discover/movie?{queryString}";
-            var response = await httpClient.GetFromJsonAsync<TMDbResponse>(url)
+            var response = await httpClient.GetFromJsonAsync<TMDbResponseDto>(url)
                 ?? throw new InvalidOperationException("Failed to retrieve movies by name and/or genre");
 
             return ParseResponse(response);
@@ -51,7 +51,7 @@ namespace MovieExplorer.Services
             {
                 return _genreCache;
             }
-            var response = await httpClient.GetFromJsonAsync<TMDbGenreListResponse>($"genre/movie/list?api_key={_apiKey}")
+            var response = await httpClient.GetFromJsonAsync<TMDbGenreListDto>($"genre/movie/list?api_key={_apiKey}")
                 ?? throw new InvalidOperationException("Failed to retrieve genres list!");
             foreach (var genre in response.Genres)
             {
@@ -65,15 +65,15 @@ namespace MovieExplorer.Services
         public async Task<MovieDetailsViewModel> GetMovieDetails(int movieId)
         {
             // Fetch movie details
-            var movieDetails = await httpClient.GetFromJsonAsync<TMDbMovieDetails>($"movie/{movieId}?api_key={_apiKey}")
+            var movieDetails = await httpClient.GetFromJsonAsync<TMDbMovieDetailsDto>($"movie/{movieId}?api_key={_apiKey}")
                 ?? throw new InvalidOperationException("Failed to retrieve movie details.");
 
             // Fetch movie images
-            var imagesResponse = await httpClient.GetFromJsonAsync<TMDbImagesResponse>($"movie/{movieId}/images?api_key={_apiKey}")
+            var imagesResponse = await httpClient.GetFromJsonAsync<TMDbImagesDto>($"movie/{movieId}/images?api_key={_apiKey}")
                 ?? throw new InvalidOperationException("Failed to retrieve movie images.");
 
             // Fetch movie credits
-            var creditsResponse = await httpClient.GetFromJsonAsync<TMDbCreditsResponse>($"movie/{movieId}/credits?api_key={_apiKey}")
+            var creditsResponse = await httpClient.GetFromJsonAsync<TMDbCreditsDto>($"movie/{movieId}/credits?api_key={_apiKey}")
                 ?? throw new InvalidOperationException("Failed to retrieve movie credits.");
 
             var imageUrls = new List<string>();
@@ -84,7 +84,7 @@ namespace MovieExplorer.Services
                 .Take(1)
                 .Select(p => $"https://image.tmdb.org/t/p/w500{p.FilePath}") ?? Enumerable.Empty<string>());
 
-            var genres = movieDetails.Genres.Select(gen => gen.GenreName).ToList<string>();
+            var genres = movieDetails.Genres.Select(gen => gen.GenreName).ToList();
             var actors = creditsResponse.Cast?
                 .Take(10)
                 .Select(c => new ActorViewModel
@@ -120,7 +120,7 @@ namespace MovieExplorer.Services
             };
         }
 
-        private IEnumerable<MovieListViewModel> ParseResponse(TMDbResponse response)
+        private IEnumerable<MovieListViewModel> ParseResponse(TMDbResponseDto response)
         {
             return response.Results?.Select(r => new MovieListViewModel
             {

@@ -1,12 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MovieExplorer.Data;
+﻿using MovieExplorer.Data;
 using MovieExplorer.Models;
+using MovieExplorer.Models.ViewModels;
 using MovieExplorer.Services;
-using Xunit;
 
 namespace MovieExplorer.Tests
 {
-    public class UserServiceTests: IClassFixture<DatabaseFixture>
+    public class UserServiceTests : IClassFixture<DatabaseFixture>
     {
         private readonly MovieExplorerDbContext _dbContext;
 
@@ -21,9 +20,14 @@ namespace MovieExplorer.Tests
         {
             // Arrange
             var userService = new UserService(_dbContext);
-
+            var userRegister = new RegisterViewModel
+            {
+                UserName = "testuser9",
+                Password = "password123",
+                Email = "test9@example.com"
+            };
             // Act
-            var user = await userService.RegisterAsync( "testuser9", "password123", "test9@example.com");
+            var user = await userService.RegisterAsync(userRegister);
 
             // Assert
             Assert.NotNull(user);
@@ -40,10 +44,15 @@ namespace MovieExplorer.Tests
             await _dbContext.SaveChangesAsync();
 
             var userService = new UserService(_dbContext);
-
+            var userRegister = new RegisterViewModel
+            {
+                UserName = "newuser",
+                Password = "password123",
+                Email = "test@example.com"
+            };
             // Act & Assert
             await Assert.ThrowsAsync<InvalidOperationException>(() =>
-                userService.RegisterAsync("newuser", "password123", "test@example.com"));
+                userService.RegisterAsync(userRegister));
         }
 
         [Fact]

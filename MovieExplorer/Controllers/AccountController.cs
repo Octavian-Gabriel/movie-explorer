@@ -22,7 +22,7 @@ namespace MovieExplorer.Controllers
             }
             try
             {
-                var user = await userService.RegisterAsync(registerViewModel.UserName, registerViewModel.Password, registerViewModel.Email);
+                var user = await userService.RegisterAsync(registerViewModel);
                 UpdateSessionWithUserInfo(user);
                 return RedirectToAction("Index", "Home");
             }

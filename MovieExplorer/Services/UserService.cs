@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieExplorer.Data;
 using MovieExplorer.Models;
+using MovieExplorer.Models.ViewModels;
 using MovieExplorer.Services.Interfaces;
 
 namespace MovieExplorer.Services
@@ -22,18 +23,18 @@ namespace MovieExplorer.Services
             return user;
         }
 
-        public async Task<User> RegisterAsync(string username, string password, string email)
+        public async Task<User> RegisterAsync(RegisterViewModel model)
         {
-            if (await dbContext.Users.AnyAsync(u => u.Email == email))
+            if (await dbContext.Users.AnyAsync(u => u.Email == model.Email))
             {
                 throw new InvalidOperationException("Email already exists!");
             }
 
             var user = new User
             {
-                UserName = username,
-                Email = email,
-                PasswordHash = PasswordHasher.HashPasword(password),
+                UserName = model.UserName,
+                Email = model.Email,
+                PasswordHash = PasswordHasher.HashPasword(model.Password),
             };
             dbContext.Users.Add(user);
             await dbContext.SaveChangesAsync();

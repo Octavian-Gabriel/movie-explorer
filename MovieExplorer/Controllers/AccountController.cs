@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MovieExplorer.Services.Interfaces;
-
+using MovieExplorer.Models.ViewModels;
+using MovieExplorer.Models;
 namespace MovieExplorer.Controllers
 {
     public class AccountController(IUserService userService) : Controller
@@ -13,18 +14,16 @@ namespace MovieExplorer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(string email, string username, string password, string confirmPassword)
+        public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
-            if (string.CompareOrdinal(password, confirmPassword) != 0)
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Passwords dont match!");
-                return View();
+                return View(registerViewModel);
             }
             try
             {
-                var user = await userService.RegisterAsync(username, password, email);
-                HttpContext.Session.SetInt32("UserId", user.Id);
-                HttpContext.Session.SetString("UserName", user.UserName);
+                var user = await userService.RegisterAsync(registerViewModel.UserName, registerViewModel.Password, registerViewModel.Email);
+                UpdateSessionWithUserInfo(user);
                 return RedirectToAction("Index", "Home");
             }
             catch (InvalidOperationException ex)
@@ -33,7 +32,11 @@ namespace MovieExplorer.Controllers
                 return View();
             }
         }
-
+        private void UpdateSessionWithUserInfo(User user)
+        {
+            HttpContext.Session.SetInt32("UserId", user.Id);
+            HttpContext.Session.SetString("UserName", user.UserName);
+        }
 
         [HttpGet]
         public IActionResult Login()
@@ -52,8 +55,7 @@ namespace MovieExplorer.Controllers
                     ModelState.AddModelError("", "Invalid email or password");
                     return View();
                 }
-                HttpContext.Session.SetInt32("UserId", user.Id);
-                HttpContext.Session.SetString("UserName", user.UserName);
+                UpdateSessionWithUserInfo(user);
                 return RedirectToAction("Index", "Home");
             }
             catch (InvalidOperationException ex)
